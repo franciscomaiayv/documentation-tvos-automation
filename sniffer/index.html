@@ -110,6 +110,10 @@
         
             <li><a class="toctree-l3" href="#syncblocking-example">Sync/Blocking Example</a></li>
         
+            <li><a class="toctree-l3" href="#sync-sample-no-rx-expectance">Sync Sample No RX Expectance</a></li>
+        
+            <li><a class="toctree-l3" href="#full-test-implementation-sample">Full Test Implementation Sample</a></li>
+        
         </ul>
     
 
@@ -293,10 +297,10 @@ cec_listener = set_up_interface(hostname)
 for message in cec_listener.wait_for_next_rx(&quot;2F:85:20:00&quot;):
     message_parsed = cec_listener.beta_interpreter(message)
     print(message_parsed)
+</code></pre>
 
-~~~SYNC EXAMPLE NO RX COMMITMENT~~~
-
-def set_up_interface(hostname):
+<h2 id="sync-sample-no-rx-expectance">Sync Sample No RX Expectance</h2>
+<pre><code>def set_up_interface(hostname):
     try:
         sniffer = CEC_Sniffer(hostname) #no NetBIOS or Bonjour on linux :(
         logger.debug(&quot;[cec-sniffer] Percussively inspecting CEC bus buffer...&quot;)
@@ -310,6 +314,89 @@ cec_listener = set_up_interface(hostname)
 for message in cec_listener.wait_for_next():
     message_parsed = cec_listener.beta_interpreter(message)
     print(message_parsed)
+
+</code></pre>
+
+<h2 id="full-test-implementation-sample">Full Test Implementation Sample</h2>
+<pre><code>from tvos.cec_sniffer import CecSniffer
+#Must include
+import logging
+import matplotlib
+matplotlib.use('agg')
+import matplotlib.pyplot as plt
+import common
+from testcases import attr
+from utils.testing import fail, given, then, when
+
+@attr(trid=&quot;C497220&quot;)
+
+def set_up_interface(hostname):
+    try:
+        sniffer = CecSniffer(hostname) #no NetBIOS or Bonjour on linux :(
+        logger.debug(&quot;[cec-sniffer] Percussively inspecting CEC bus buffer...&quot;)
+        sniffer.sync_messages_local()
+        logger.debug(&quot;[cec-sniffer] Buffer synced!&quot;)
+        return sniffer
+    except:
+        fail(&quot;CEC Interface Error&quot;)
+
+def cec_test(hostname=&quot;http://172.20.44.138&quot;):
+    cec_listener = set_up_interface(hostname)
+    with given(&quot;&quot;&quot; The STB is connected through HDMI to a device that displays and decodes CEC messages exchanged between devices on the HDMI bus:
+        Ref: https://wiki.youview.co.uk/display/canvas/Using+the+Kwikwai+device+to+inspect+HDMI+CEC+messages
+        Note: Please ensure HDMI 1 on the TV is used during setup.
+
+        AND the STB is the HDMI Active source
+        To check that STB hdmi-cec-state is &quot;Active&quot;, send an HDMI CEC &lt;Request Active Source&gt; message on the CEC device e.g 2F:85:20:00 and the STB should respond by broadcasting an HDMI CEC &lt;Active Source&gt; message 3F:82:10:00 &quot;&quot;&quot;):
+
+
+        sent_message = False
+        recieved_message = False
+        for message in cec_listener.wait_for_next_rx(&quot;2F:85:20:00&quot;):
+            message_parsed = cec_listener.beta_interpreter(message)
+            print(message_parsed)
+            try:
+                if message_parsed[&quot;direction&quot;] == &quot;TX&quot; and message_parsed[&quot;message&quot;] == &quot;2f:85:20:00&quot;:
+                    sent_message = True
+
+                if message_parsed[&quot;direction&quot;] == &quot;RX&quot; and message_parsed[&quot;message&quot;].split(&quot;:&quot;)[1] == &quot;82&quot;:
+                    recieved_message = True
+            except Exception as e:
+                fail('Error decoding messages')
+        preconditions_output = {
+            &quot;sent_message&quot; : sent_message,
+            &quot;recieved_message&quot; : recieved_message
+        }
+        print(preconditions_output)
+        if not (sent_message and recieved_message):
+            #raise common.InvalidTest('Could not check STB is the HDMI active source, probably because we have a splitter inline')
+            logger.debug('Could not check STB is the HDMI active source, probably because we have a splitter inline')
+            #fail(&quot;Could not check STB is the HDMI active source&quot;)
+
+    with when(&quot;&quot;&quot; I send an HDMI CEC &quot;Request Active Source&quot; message on the CEC device: &quot;&quot;&quot;):
+        print(&quot;Testing beta feature&quot;)
+
+    with then(&quot;&quot;&quot;  The STB will broadcast an HDMI CEC &quot;Active Source (82)&quot; message &quot;&quot;&quot;):
+        sent_message = False
+        recieved_message = False
+        for message in cec_listener.wait_for_next_rx(&quot;4F:85:30:00&quot;):
+            message_parsed = cec_listener.beta_interpreter(message)
+            print(message_parsed)
+            try:
+                if message_parsed[&quot;direction&quot;] == &quot;TX&quot; and message_parsed[&quot;message&quot;] == &quot;4f:85:30:00&quot;:
+                    sent_message = True
+
+                if message_parsed[&quot;direction&quot;] == &quot;RX&quot; and message_parsed[&quot;message&quot;].split(&quot;:&quot;)[1] == &quot;82&quot;: #We can simply check the message ID from the 2nd block and return the correct request &quot;Active Source&quot; (Brodcast).
+                    recieved_message = True
+            except:
+                fail(&quot;Failed on awaiting Active Source (82), check combined log&quot;)
+        if not (sent_message and recieved_message):
+            preconditions_output = {
+                &quot;sent_message&quot; : sent_message,
+                &quot;recieved_message&quot; : recieved_message
+            }
+            logger.debug(preconditions_output)
+            fail(&quot;Failed on awaiting Active Source (82), check combined log&quot;)
 
 </code></pre>
               
