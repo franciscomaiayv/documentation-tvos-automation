@@ -69,21 +69,9 @@
         
             <li><a class="toctree-l3" href="#class-cecsniffer">class CecSniffer:</a></li>
         
-            <li><a class="toctree-l3" href="#parameters">Parameters</a></li>
-        
-            <li><a class="toctree-l3" href="#attributes">Attributes</a></li>
-        
             <li><a class="toctree-l3" href="#initself-hostname">init(self, hostname)</a></li>
         
-            <li><a class="toctree-l3" href="#parameters_1">Parameters</a></li>
-        
-            <li><a class="toctree-l3" href="#returns">Returns</a></li>
-        
             <li><a class="toctree-l3" href="#begin_listenselfcec_bus_listenercec_bus_listener_keepalivecec_sniffer_killedcec_sniffer_started">begin_listen(self,cec_bus_listener,cec_bus_listener_keepalive,cec_sniffer_killed,cec_sniffer_started):</a></li>
-        
-            <li><a class="toctree-l3" href="#parameters_2">Parameters</a></li>
-        
-            <li><a class="toctree-l3" href="#returns_1">Returns</a></li>
         
             <li><a class="toctree-l3" href="#sync_messages_localself">sync_messages_local(self)</a></li>
         
@@ -93,11 +81,7 @@
         
             <li><a class="toctree-l3" href="#wait_for_next_rxself-message">wait_for_next_rx(self, message)</a></li>
         
-            <li><a class="toctree-l3" href="#returns_2">Returns</a></li>
-        
             <li><a class="toctree-l3" href="#beta_interpreterself-block">beta_interpreter(self, block)</a></li>
-        
-            <li><a class="toctree-l3" href="#returns_3">Returns</a></li>
         
         </ul>
     
@@ -158,11 +142,11 @@
 the upcoming block, whicever is the new block we consider it to be new.</p>
 <p>This module works in an async and a sync way, yes kinda like node js :)</p>
 <h2 id="class-cecsniffer">class CecSniffer:</h2>
-<h2 id="parameters">Parameters</h2>
+<p>Parameters</p>
 <p>hostname : string
     the URL of the kwikwai device, aboid ntebios
     and bonjour  on unix</p>
-<h2 id="attributes">Attributes</h2>
+<p>Attributes</p>
 <p>current_last_message : string
     the current buffer we query (new block appears here)
 messages : obj
@@ -171,15 +155,15 @@ token : int
     random int from kiwkwai, used as auth token
 hostname</p>
 <h2 id="initself-hostname"><strong>init</strong>(self, hostname)</h2>
-<h2 id="parameters_1">Parameters</h2>
+<p>Parameters</p>
 <p>hostname : string
     the URL of the kwikwai device, avoid ntebios
     and bonjour  on unix</p>
-<h2 id="returns">Returns</h2>
+<p>Returns</p>
 <p>none
     constructs :o</p>
 <h2 id="begin_listenselfcec_bus_listenercec_bus_listener_keepalivecec_sniffer_killedcec_sniffer_started">begin_listen(self,cec_bus_listener,cec_bus_listener_keepalive,cec_sniffer_killed,cec_sniffer_started):</h2>
-<h2 id="parameters_2">Parameters</h2>
+<p>Parameters</p>
 <p>cec_bus_listener : callback
     for ASYNC, will be called on new message
 cec_bus_listener_keepalive : callback
@@ -188,7 +172,7 @@ cec_sniffer_killed : callback
     for AYNC, to be called when listener killed gracefully
 cec_sniffer_started : callback
     for ASYNC, to be called on new listener</p>
-<h2 id="returns_1">Returns</h2>
+<p>Returns</p>
 <p>class
     the constructed class</p>
 <h2 id="sync_messages_localself">sync_messages_local(self)</h2>
@@ -199,7 +183,6 @@ local variable. this is so we can keep checking for
 new blocks and use our local blocks to compare any new ones
 that appear in kwikwais memory
 Returns</p>
-<hr />
 <p>json
 no return</p>
 <h2 id="send_messageself-message">send_message(self, message)</h2>
@@ -207,36 +190,31 @@ no return</p>
 we also sniff the token to include
 in this post
   Parameters</p>
-<hr />
 <p>message : string
       the message to seng
   Returns</p>
-<hr />
 <p>true
       return true, for non blocking</p>
 <h2 id="wait_for_nextself">wait_for_next(self)</h2>
 <p>link for the non persistant_query
 Returns</p>
-<hr />
 <p>block (json)
 will return the messsage</p>
 <h2 id="wait_for_next_rxself-message">wait_for_next_rx(self, message)</h2>
 <p>link for the non persistant_query but will
 also send a message. will raise rx flag
 Parameters</p>
-<hr />
 <p>message : json
 message to send to kwikwai</p>
-<h2 id="returns_2">Returns</h2>
+<p>Returns</p>
 <p>json
 Description of returned object.</p>
 <h2 id="beta_interpreterself-block">beta_interpreter(self, block)</h2>
 <p>will attempt to convert a recieved message into json
 Parameters</p>
-<hr />
 <p>block : json
 block of recieved data from kwikwai</p>
-<h2 id="returns_3">Returns</h2>
+<p>Returns</p>
 <p>json
 obj with interpreted messages from kwikwai,
 format is set below</p>
