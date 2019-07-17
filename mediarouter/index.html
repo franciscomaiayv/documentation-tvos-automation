@@ -8,7 +8,7 @@
   
   
   <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>Documentation [MediaRouter Library] - TVOS Test Automation Tools</title>
+  <title>MediaRouter Librart - TVOS Test Automation Tools</title>
   <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
 
   <link rel="stylesheet" href="../css/theme.css" type="text/css" />
@@ -17,8 +17,8 @@
   
   <script>
     // Current page data
-    var mkdocs_page_name = "Documentation [MediaRouter Library]";
-    var mkdocs_page_input_path = "documentation.md";
+    var mkdocs_page_name = "MediaRouter Librart";
+    var mkdocs_page_input_path = "mediarouter.md";
     var mkdocs_page_url = null;
   </script>
   
@@ -50,7 +50,7 @@
           
             <li class="toctree-l1 current">
 		
-    <a class="current" href="./">Documentation [MediaRouter Library]</a>
+    <a class="current" href="./">MediaRouter Librart</a>
     <ul class="subnav">
             
     <li class="toctree-l2"><a href="#media-router-yv">Media Router YV</a></li>
@@ -114,12 +114,20 @@
         </ul>
     
 
+    <li class="toctree-l2"><a href="#tests-example">Tests Example</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#test-1">Test #1</a></li>
+        
+            <li><a class="toctree-l3" href="#test-2">Test #2</a></li>
+        
+            <li><a class="toctree-l3" href="#test-3">Test #3</a></li>
+        
+        </ul>
+    
+
     </ul>
-	    </li>
-          
-            <li class="toctree-l1">
-		
-    <a class="" href="../tests/">Tests</a>
 	    </li>
           
             <li class="toctree-l1">
@@ -149,7 +157,7 @@
     
       
     
-    <li>Documentation [MediaRouter Library]</li>
+    <li>MediaRouter Librart</li>
     <li class="wy-breadcrumbs-aside">
       
     </li>
@@ -393,6 +401,133 @@ this is useful in between tests or on thrown errors.</p>
 <pre><code>self.stop()
 self.recycle()
 </code></pre>
+
+<h1 id="tests-example">Tests Example</h1>
+<p>Here you will find two tests. Please Have a look through these. They were selected
+because they are great showcases of the capabilities of the MediaRouter library.</p>
+<p>These tests inlcude:</p>
+<pre><code class="python">import logging
+import time
+from utils.testing import (
+    fail,
+    given,
+    then,
+    when
+)
+from tvos.mediarouter import (
+    MediaRouter,
+    MediaRouterErrors
+)
+from nextgen.video_signal import (
+    wait_for_video,
+    wait_for_no_video
+)
+import recover
+logger = logging.getLogger(__name__)
+</code></pre>
+
+<h2 id="test-1">Test #1</h2>
+<pre><code class="python">@attr(trid=&quot;C496887&quot;, labels=(TL.YOUVIEW_SPECIFICATION_TESTS, TL.SSH))
+def run_test_recycle_active_mr():
+    try:
+        with given(&quot;&quot;&quot; Spec Paragraph/Functional Area:
+            MediaRouter Specification (1125-S) Version 1.3E, Section 4.5,
+            GIVEN STB is connected to an
+            display device through HDMI
+            AND I create a PDL MediaRouter and start it &quot;&quot;&quot;):
+            MR = MediaRouter()
+            MR.set_source_and_play(
+                &quot;http://filegateway.youview.co.uk/test_assets/licence_free/VA-503.ts&quot;
+            )
+            wait_for_video(20)
+            time.sleep(20)
+        with when(&quot;&quot;&quot; WHEN I call MediaRouter.recycle() &quot;&quot;&quot;):
+            MR.recycle()
+        with then(&quot;&quot;&quot; THEN the video output on the connected
+            display device will be blanked  &quot;&quot;&quot;):
+            wait_for_no_video(20)
+            MR.cleanup()
+    except:
+        MR.cleanup()
+
+</code></pre>
+
+<h2 id="test-2">Test #2</h2>
+<pre><code class="python">@attr(trid=&quot;C496887&quot;, labels=(TL.YOUVIEW_SPECIFICATION_TESTS, TL.SSH))
+def run_test_recycle_active_mr():
+    try:
+        with given(&quot;&quot;&quot; Spec Paragraph/Functional Area:
+            MediaRouter Specification (1125-S) Version 1.3E, Section 4.5,
+            GIVEN STB is connected to an
+            display device through HDMI
+            AND I create a PDL MediaRouter and start it &quot;&quot;&quot;):
+            MR = MediaRouter()
+            MR.set_source_and_play(
+                &quot;http://filegateway.youview.co.uk/test_assets/licence_free/VA-503.ts&quot;
+            )
+            wait_for_video(20)
+            time.sleep(20)
+        with when(&quot;&quot;&quot; WHEN I call MediaRouter.recycle() &quot;&quot;&quot;):
+            MR.recycle()
+        with then(&quot;&quot;&quot; THEN the video output on the connected
+            display device will be blanked  &quot;&quot;&quot;):
+            wait_for_no_video(20)
+            MR.cleanup()
+    except:
+        MR.cleanup()
+
+</code></pre>
+
+<h2 id="test-3">Test #3</h2>
+<p>Error detection is a big part of TVOS testing. In the following test we will showcase how
+we can detect a non included error.</p>
+<p>The test goes as follows:</p>
+<pre><code>@attr(trid=&quot;C496874&quot;, labels=(TL.YOUVIEW_SPECIFICATION_TESTS, TL.SSH))
+def run_test_invalid_enumeration():
+    with given(&quot;&quot;&quot; Spec Paragraph/Functional Area: MediaRouter Specification (1125-S) Version 1.3E, Annex A MediaRouter API, A.1.19,
+    I create a PDL MediaRouter: &quot;&quot;&quot;):
+        MR = MediaRouter()
+        MR.set_source(&quot;http://filegateway.youview.co.uk/test_assets/restricted/VA-237.mpg&quot;)
+        MR.set_sink(&quot;string:decoder://0&quot;)
+        pass
+    with then(&quot;&quot;&quot; THEN MediaRouter.seekPosition() with invalid arguments returns an error:&quot;Zinc.Media.Error.InvalidEnumeration&quot;  &quot;&quot;&quot;):
+        if not MR.seek_position(&quot;int32:1&quot;, &quot;int32:600000&quot;, &quot;int32:4&quot;) == MediaRouterErrors.InvalidEnumeration:
+            fail(&quot;No error returned&quot;)
+        pass
+    with when(&quot;&quot;&quot; AND I call MediaRouter.start()&quot;&quot;&quot;):
+        MR.start()
+        pass
+    with when(&quot;&quot;&quot; AND MediaRouter.seekPosition() with invalid arguments returns an error:&quot;Zinc.Media.Error.InvalidEnumeration&quot; &quot;&quot;&quot;):
+        if not MR.seek_position(&quot;int32:7&quot;, &quot;int32:600000&quot;, &quot;int32:1&quot;) == MediaRouterErrors.InvalidEnumeration:
+            fail(&quot;No error returned&quot;)
+        pass
+</code></pre>
+
+<p>The above test gets a dbus resoonse like this:</p>
+<pre><code>Error org.freedesktop.DBus.Error.InvalidArgs: Could not convert int-&gt;enum\c Invalid enum value
+</code></pre>
+
+<p>This error is not known, so we can listen to it as follows:</p>
+<pre><code>@attr(trid=&quot;C496874&quot;, labels=(TL.YOUVIEW_SPECIFICATION_TESTS, TL.SSH))
+def run_test_invalid_enumeration_force_error():
+    with given(&quot;&quot;&quot; Spec Paragraph/Functional Area: MediaRouter Specification (1125-S) Version 1.3E, Annex A MediaRouter API, A.1.19,
+    I create a PDL MediaRouter: &quot;&quot;&quot;):
+        MR = MediaRouter()
+        MR.set_source(&quot;http://filegateway.youview.co.uk/test_assets/restricted/VA-237.mpg&quot;)
+        MR.set_sink(&quot;string:decoder://0&quot;)
+        pass
+    with then(&quot;&quot;&quot; THEN MediaRouter.seekPosition() with invalid arguments returns an error:&quot;Zinc.Media.Error.InvalidEnumeration&quot;  &quot;&quot;&quot;):
+        if not &quot;org.freedesktop.DBus.Error.InvalidArgs&quot; in MR.seek_position(&quot;int32:1&quot;, &quot;int32:600000&quot;, &quot;int32:4&quot;):
+            fail(&quot;No error returned&quot;)
+        pass
+    with when(&quot;&quot;&quot; AND I call MediaRouter.start()&quot;&quot;&quot;):
+        MR.start()
+        pass
+    with when(&quot;&quot;&quot; AND MediaRouter.seekPosition() with invalid arguments returns an error:&quot;Zinc.Media.Error.InvalidEnumeration&quot; &quot;&quot;&quot;):
+        if not &quot;org.freedesktop.DBus.Error.InvalidArgs&quot; in MR.seek_position(&quot;int32:7&quot;, &quot;int32:600000&quot;, &quot;int32:1&quot;):
+            fail(&quot;No error returned&quot;)
+        pass
+</code></pre>
               
             </div>
           </div>
@@ -400,7 +535,7 @@ self.recycle()
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../tests/" class="btn btn-neutral float-right" title="Tests">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../video_listener/" class="btn btn-neutral float-right" title="Video Signal Check">Next <span class="icon icon-circle-arrow-right"></span></a>
       
       
     </div>
@@ -428,7 +563,7 @@ self.recycle()
       
       
       
-        <span style="margin-left: 15px"><a href="../tests/" style="color: #fcfcfc">Next &raquo;</a></span>
+        <span style="margin-left: 15px"><a href="../video_listener/" style="color: #fcfcfc">Next &raquo;</a></span>
       
     </span>
 </div>
