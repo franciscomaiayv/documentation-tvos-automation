@@ -105,7 +105,7 @@
         
             <li><a class="toctree-l3" href="#mediarouterget_positionself">MediaRouter.get_position(self)</a></li>
         
-            <li><a class="toctree-l3" href="#mediarouterstart_bufferingself-arg">MediaRouter.start_buffering(self, arg)</a></li>
+            <li><a class="toctree-l3" href="#mediarouterstart_bufferingself">MediaRouter.start_buffering(self)</a></li>
         
             <li><a class="toctree-l3" href="#mediarouterset_media_durationself-arg">MediaRouter.set_media_duration(self, arg)</a></li>
         
@@ -383,7 +383,7 @@ of the current MR</p>
 <pre><code>dbus-send --session --print-reply --type=method_call --dest='Zinc.Media' $MR Zinc.Media.MediaRouter.getPosition
 </code></pre>
 
-<h2 id="mediarouterstart_bufferingself-arg">MediaRouter.start_buffering(self, arg)</h2>
+<h2 id="mediarouterstart_bufferingself">MediaRouter.start_buffering(self)</h2>
 <p>Sends a dbus message that will start the buffering
 of the current MR</p>
 <p>Returns:
